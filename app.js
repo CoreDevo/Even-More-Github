@@ -21,7 +21,6 @@ response.on('end',function(){
     json.forEach(function(repo){
         languages.push(repo.language);
     });
-    // console.log(languages);
     calculateWeight(languages);
 });
 
@@ -33,7 +32,6 @@ request.end();
 
 function calculateWeight(arrayElements){
     var counts = {};
-    // console.log(arrayElements)
     arrayElements.forEach(function(x) {
         counts[x] = (counts[x] || 0)+1;
     });
@@ -55,11 +53,6 @@ function calculateWeight(arrayElements){
     }
     sortedList = JSON.stringify(sortedList).replace(/["]+/g, '').replace(/\\/g, "'")
     console.log(sortedList);
-
-    // var objKeysRegex = /({|,)(?:\s*)(?:')?([A-Za-z_$\.][A-Za-z0-9_ \-\.$]*)(?:')?(?:\s*):/g;// look for object names
-    // var counts = JSON.stringify(counts).replace(/(\s*?{\s*?|\s*?,\s*?)(['"])?([a-zA-Z0-9]+)(['"])?:/g, '$1"$3":');
-    // console.log(counts)
-
 }
 
 function getSum(obj){
@@ -78,7 +71,6 @@ function sortProperties(obj)
             sortable.push([key, obj[key]]);
           }
     }
-    // console.log(sortable)
     sortable.sort(function(a, b)
     {
         var x=a[1],
