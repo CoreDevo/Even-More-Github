@@ -2,6 +2,7 @@ var express = require('express');
 var app = express();
 var https = require("https");
 var sortJson = require('sort-json');
+//get more users
 var userName='ckyue';
 var options = {
 host :"api.github.com",
@@ -51,7 +52,9 @@ function calculateWeight(arrayElements){
       counts[element] = counts[element].replace(/\]/g, "}")
       sortedList.push(counts[element]);
     }
-    sortedList = JSON.stringify(sortedList).replace(/["]+/g, '').replace(/\\/g, "'")
+    sortedList = JSON.stringify(sortedList).replace(/["]+/g, '').replace(/\\/g, "'").replace(/'/g, '"');
+    sortedList = JSON.parse(sortedList);
+    // sortedList = JSON.stringify(sortedList).replace("'","");
     console.log(sortedList);
 }
 
@@ -78,4 +81,8 @@ function sortProperties(obj)
         return x<y ? -1 : x>y ? 1 : 0;
     });
     return sortable;
+}
+
+function exportToCSV(){
+
 }
