@@ -1,7 +1,13 @@
 var express = require('express');
 var app = express();
+var fs = require('fs');
 var https = require("https");
 var sortJson = require('sort-json');
+var json2csv = require('json2csv');
+var fields = ['JavaScript', 'Arduino', 'C++', 'Shell', 'HTML', 'CSS'];
+var csv = require('ya-csv');
+var csvWriter = csv.createCsvFileWriter('dataset.csv');
+var dataArray = [];
 var input;
 app.get('/', function (req, res) {
     res.send(input)
@@ -59,8 +65,33 @@ function calculateWeight(arrayElements){
     }
     sortedList = JSON.stringify(sortedList).replace(/["]+/g, '').replace(/\\/g, "'").replace(/'/g, '"');
     sortedList = JSON.parse(sortedList);
-    input  = sortedList;
-    console.log(sortedList);
+    var combinedList
+    combinedList = combineJsonObj(sortedList)
+    // console.log(sortedList);
+    json2csv({ data: combinedList, fields: fields }, function(err, csv) {
+        if (err) console.log(err);
+          console.log(csv);
+          fs.writeFile('dataset.csv', csv, function(err) {
+            if (err) throw err;
+            console.log('file saved');
+          });
+          // var trunk = csv.split()
+          // dataArray.push(trunk);
+          // console.log(dataArray)
+          // exportToCSV(dataArray);
+    });
+}
+
+function combineJsonObj(source) {
+    var result = {};
+    // var sources = [].slice.call(arguments, 1);
+    source.forEach(function (source) {
+        for (var prop in source) {
+            result[prop] = source[prop];
+        }
+    });
+    console.log(result)
+    return result;
 }
 
 function getSum(obj){
@@ -88,8 +119,8 @@ function sortProperties(obj)
     return sortable;
 }
 
-function exportToCSV(){
-
+function exportToCSV(data){
+    csvWriter.writeRecord(data);
 }
 
 app.listen(3000, function () {
