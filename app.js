@@ -2,6 +2,11 @@ var express = require('express');
 var app = express();
 var https = require("https");
 var sortJson = require('sort-json');
+var input;
+app.get('/', function (req, res) {
+    res.send(input)
+});
+
 //get more users
 var userName='ckyue';
 var options = {
@@ -54,7 +59,7 @@ function calculateWeight(arrayElements){
     }
     sortedList = JSON.stringify(sortedList).replace(/["]+/g, '').replace(/\\/g, "'").replace(/'/g, '"');
     sortedList = JSON.parse(sortedList);
-    // sortedList = JSON.stringify(sortedList).replace("'","");
+    input  = sortedList;
     console.log(sortedList);
 }
 
@@ -86,3 +91,7 @@ function sortProperties(obj)
 function exportToCSV(){
 
 }
+
+app.listen(3000, function () {
+  console.log('listening on port 3000');
+});
