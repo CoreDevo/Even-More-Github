@@ -47,11 +47,8 @@ function calculateWeight(arrayElements){
     arrayElements.forEach(function(x) {
         counts[x] = (counts[x] || 0)+1;
     });
-    // console.log(counts);
     var totalLanguages = getSum(counts);
-    // console.log(totalLanguages);
     for(var language in counts){
-        // console.log(counts[language])
         counts[language] = counts[language]/totalLanguages;
     }
     counts = sortProperties(counts);
@@ -67,7 +64,6 @@ function calculateWeight(arrayElements){
     sortedList = JSON.parse(sortedList);
     var combinedList
     combinedList = combineJsonObj(sortedList)
-    // console.log(sortedList);
     json2csv({ data: combinedList, fields: fields }, function(err, csv) {
         if (err) console.log(err);
           console.log(csv);
