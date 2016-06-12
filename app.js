@@ -71,10 +71,6 @@ function calculateWeight(arrayElements){
             if (err) throw err;
             console.log('file saved');
           });
-          // var trunk = csv.split()
-          // dataArray.push(trunk);
-          // console.log(dataArray)
-          // exportToCSV(dataArray);
     });
 }
 
@@ -113,10 +109,6 @@ function sortProperties(obj)
         return x<y ? -1 : x>y ? 1 : 0;
     });
     return sortable;
-}
-
-function exportToCSV(data){
-    csvWriter.writeRecord(data);
 }
 
 app.listen(3000, function () {
