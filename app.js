@@ -9,38 +9,72 @@ var csv = require('ya-csv');
 var csvWriter = csv.createCsvFileWriter('dataset.csv');
 var dataArray = [];
 var input;
+var combinedList = [];
 app.get('/', function (req, res) {
     res.send(input)
 });
 
 //get more users
-var userName='ckyue';
-var options = {
-host :"api.github.com",
-path : '/users/'+userName+'/repos',
-method : 'GET',
-headers: {'User-Agent':'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0)'}
+// GetUserStarredRepo();
+function GetUserStarredRepo(username){
+    var userName='ckyue';//DEBUGGING
+    var options = {
+      host :"api.github.com",
+      path : '/users/'+userName+'/starred',
+      method : 'GET',
+      headers: {'User-Agent':'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0)'}
+    }
+
+    var request = https.request(options, function(response){
+      var body = '';
+      response.on('data',function(chunk){
+        body+=chunk;
+      });
+      response.on('end',function(){
+        var json = JSON.parse(body);
+        // console.log(json)
+        var starredRepoURLs = [];
+        json.forEach(function(repo){
+          //TODO:push link properly
+          starredRepoURLs.push(repo.home_url);
+        });
+      });
+    });
+    request.on('error', function(e) {
+      console.error('and the error is '+e);
+    });
+    request.end();
+    console.log(starredRepoURLs)
 }
 
-var request = https.request(options, function(response){
-var body = '';
-response.on('data',function(chunk){
-    body+=chunk;
-});
-response.on('end',function(){
-    var json = JSON.parse(body);
-    var languages = [];
-    json.forEach(function(repo){
-        languages.push(repo.language);
-    });
-    calculateWeight(languages);
-});
+function GetUserOwnRepo(username){
+    // var userName='ckyue';//DEBUGGING
+    var options = {
+      host :"api.github.com",
+      path : '/users/'+userName+'/repos',
+      method : 'GET',
+      headers: {'User-Agent':'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0)'}
+    }
 
-});
-request.on('error', function(e) {
-    console.error('and the error is '+e);
-});
-request.end();
+    var request = https.request(options, function(response){
+      var body = '';
+      response.on('data',function(chunk){
+        body+=chunk;
+      });
+      response.on('end',function(){
+        var json = JSON.parse(body);
+        var languages = [];
+        json.forEach(function(repo){
+          languages.push(repo.language);
+        });
+        calculateWeight(languages);
+      });
+    });
+    request.on('error', function(e) {
+      console.error('and the error is '+e);
+    });
+    request.end();
+}
 
 function calculateWeight(arrayElements){
     var counts = {};
@@ -62,18 +96,15 @@ function calculateWeight(arrayElements){
     }
     sortedList = JSON.stringify(sortedList).replace(/["]+/g, '').replace(/\\/g, "'").replace(/'/g, '"');
     sortedList = JSON.parse(sortedList);
-    var combinedList
     combinedList = combineJsonObj(sortedList)
-    json2csv({ data: combinedList, fields: fields }, function(err, csv) {
-        if (err) console.log(err);
-          console.log(csv);
-          fs.writeFile('dataset.csv', csv, function(err) {
-            if (err) throw err;
-            console.log('file saved');
-          });
-    });
+    // console.log(combinedList);
+    addToDataArray(combinedList);
+    // exportToCSV(combinedList);
 }
 
+function addToDataArray(list){
+    dataArray.push(addToDataArray);
+}
 function combineJsonObj(source) {
     var result = {};
     // var sources = [].slice.call(arguments, 1);
@@ -82,7 +113,7 @@ function combineJsonObj(source) {
             result[prop] = source[prop];
         }
     });
-    console.log(result)
+    // console.log(result)
     return result;
 }
 
@@ -109,6 +140,19 @@ function sortProperties(obj)
         return x<y ? -1 : x>y ? 1 : 0;
     });
     return sortable;
+}
+
+//last step after appending all data into dataArray
+function exportToCSV(combinedList){
+  //combinedList is an array of JSON objects
+    json2csv({ data: combinedList, fields: fields }, function(err, csv) {
+        if (err) console.log(err);
+          console.log(csv);
+          fs.writeFile('dataset.csv', csv, function(err) {
+            if (err) throw err;
+            console.log('file saved');
+          });
+        });
 }
 
 app.listen(3000, function () {
