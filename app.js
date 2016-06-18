@@ -15,7 +15,7 @@ app.get('/', function (req, res) {
 });
 
 //get more users
-// GetUserStarredRepo();
+GetUserStarredRepo();
 function GetUserStarredRepo(username){
     var userName='ckyue';//DEBUGGING
     var options = {
@@ -36,15 +36,15 @@ function GetUserStarredRepo(username){
         var starredRepoURLs = [];
         json.forEach(function(repo){
           //TODO:push link properly
-          starredRepoURLs.push(repo.home_url);
+          starredRepoURLs.push(repo.html_url);
         });
+          console.log(starredRepoURLs)
       });
     });
     request.on('error', function(e) {
       console.error('and the error is '+e);
     });
     request.end();
-    console.log(starredRepoURLs)
 }
 
 function GetUserOwnRepo(username){
