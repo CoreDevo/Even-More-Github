@@ -10,17 +10,19 @@ var csvWriter = csv.createCsvFileWriter('dataset.csv');
 var dataArray = [];
 var input;
 var combinedList = [];
+var starredRepoNumberCounter = 0;
+
 app.get('/', function (req, res) {
     res.send(input)
 });
-
+//
 //get more users
-GetUserStarredRepo();
+GetUserStarredRepo("ckyue");//DEBUGGING
+GetUserOwnRepo("ckyue");//DEBUGGING
 function GetUserStarredRepo(username){
-    var userName='ckyue';//DEBUGGING
     var options = {
       host :"api.github.com",
-      path : '/users/'+userName+'/starred',
+      path : '/users/'+username+'/starred',
       method : 'GET',
       headers: {'User-Agent':'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0)'}
     }
@@ -38,7 +40,9 @@ function GetUserStarredRepo(username){
           //TODO:push link properly
           starredRepoURLs.push(repo.html_url);
         });
-          console.log(starredRepoURLs)
+          console.log(starredRepoURLs);
+          starredRepoNumberCounter = starredRepoURLs.length;//NOTE: maxx of 30 repos returned by github api
+          console.log(starredRepoNumberCounter)
       });
     });
     request.on('error', function(e) {
@@ -48,10 +52,9 @@ function GetUserStarredRepo(username){
 }
 
 function GetUserOwnRepo(username){
-    // var userName='ckyue';//DEBUGGING
     var options = {
       host :"api.github.com",
-      path : '/users/'+userName+'/repos',
+      path : '/users/'+username+'/repos',
       method : 'GET',
       headers: {'User-Agent':'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0)'}
     }
@@ -97,12 +100,13 @@ function calculateWeight(arrayElements){
     sortedList = JSON.stringify(sortedList).replace(/["]+/g, '').replace(/\\/g, "'").replace(/'/g, '"');
     sortedList = JSON.parse(sortedList);
     combinedList = combineJsonObj(sortedList)
-    // console.log(combinedList);
+    console.log(combinedList);
     addToDataArray(combinedList);
     // exportToCSV(combinedList);
 }
 
 function addToDataArray(list){
+  //TODO:format data array by number of user starred repo
     dataArray.push(addToDataArray);
 }
 function combineJsonObj(source) {
