@@ -10,14 +10,15 @@ var csv = require('ya-csv');
 var csvWriter = csv.createCsvFileWriter('dataset.csv');
 var dataArray = [];
 var output;
-var combinedList = [];//NOTE:needs to be free
-var starredRepoURLs = [];//NOTE:needs to be free
+var combinedList = [];
+var starredRepoURLs = [];
 var starredRepoNumberCounter = 0;
 var token = "";
 var outputSent = 0;
 var inputUsername = "ckyue"
 var users = [inputUsername];
 var userScrapedCounter = 0;
+
 app.get('/', function (req, res) {
     //delete url key in JSON in output JSON response for pischen
     delete output['url'];
@@ -83,37 +84,6 @@ var getMoreUsers = function(){
   });
   request.end();
 }();
-
-function getUsersFollowing(input){
-  var options = {
-    host :"api.github.com",
-    path : '/users/'+input+'/following',
-    method : 'GET',
-    headers: {
-      'User-Agent':'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0)',
-      'Authorization':'token '+ token
-    }
-  }
-
-  var request = https.request(options, function(response){
-    var body = '';
-    response.on('data',function(chunk){
-      body+=chunk;
-    });
-    response.on('end',function(){
-      var json = JSON.parse(body);
-      // console.log(json)
-      json.forEach(function(user){
-        users.push(user.login);
-      });
-      console.log(users)
-    });
-  });
-  request.on('error', function(e) {
-    console.error('and the error is '+e);
-  });
-  request.end();
-}
 
 // GetUserStarredRepo("ckyue");//DEBUGGING
 function GetUserStarredRepo(username){
@@ -311,4 +281,35 @@ function asyncScrapUsers(){
       callback();
     }
   ]);
+}
+
+function getUsersFollowing(input){
+  var options = {
+    host :"api.github.com",
+    path : '/users/'+input+'/following',
+    method : 'GET',
+    headers: {
+      'User-Agent':'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0)',
+      'Authorization':'token '+ token
+    }
+  }
+
+  var request = https.request(options, function(response){
+    var body = '';
+    response.on('data',function(chunk){
+      body+=chunk;
+    });
+    response.on('end',function(){
+      var json = JSON.parse(body);
+      // console.log(json)
+      json.forEach(function(user){
+        users.push(user.login);
+      });
+      console.log(users)
+    });
+  });
+  request.on('error', function(e) {
+    console.error('and the error is '+e);
+  });
+  request.end();
 }
