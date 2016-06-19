@@ -14,7 +14,7 @@ var backendOutput;
 var combinedList = [];
 var starredRepoURLs = [];
 var starredRepoNumberCounter = 0;
-var token = "";
+var token = '';
 var backendOutputSent = 0;
 var inputUsername = "";//NOTE: manually giving it value for debugging only
 var users = [];
@@ -25,7 +25,7 @@ var GithubOAuth = function(){
     var options = {
       host :"api.github.com",
       path : '/',
-      method : 'POST',
+      method : 'GET',
       headers: {
         'User-Agent':'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0)',
         'Authorization':'token '+ token
@@ -104,10 +104,12 @@ function postToBackEnd(data){
   });
   request.end();
 }
+
 var getMoreUsers = function(){
+  //path: to filter users with followers >= INT
   var options = {
     host :"api.github.com",
-    path : '/search/users?q=+followers:%3E10000&page=1&per_page=100',
+    path : '/search/users?q=+followers:%3E1000&page=1&per_page=100',
     method : 'GET',
     headers: {
       'User-Agent':'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0)'
@@ -174,7 +176,7 @@ function GetUserStarredRepo(username){
 }
 
 function GetUserOwnRepo(username, postFromFrontEndFlag){
-    // console.log(username)//all username scrap or requested
+    console.log(username)//all username scrap or requested
     var options = {
       host :"api.github.com",
       path : '/users/'+username+'/repos',
