@@ -1,0 +1,17 @@
+{
+  "name": "Even-More-Github",
+  "main": "app.js",
+  "description": "Enhance your Github experience",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CoreDevo/Even-More-Github.git"
+  },
+  "license": "none",
+  "dependencies": {
+    "express": "latest",
+    "https": "latest",
+    "sort-json": "latest",
+    "json2csv": "latest",
+    "ya-csv": "latest"
+  }
+}

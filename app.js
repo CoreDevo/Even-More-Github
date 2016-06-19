@@ -4,7 +4,7 @@ var fs = require('fs');
 var https = require("https");
 var sortJson = require('sort-json');
 var json2csv = require('json2csv');
-var async = require('async');
+// var async = require('async');
 var fields = ['url','Java', 'C', 'C++', 'Python', 'C#', 'PHP','JavaScript','Perl','Ruby','Swift','Objective-C','R','MATLAB','Scala','Shell','Lua','Haskell','Bash','Go','Lisp'];
 var csv = require('ya-csv');
 var csvWriter = csv.createCsvFileWriter('dataset.csv');
@@ -13,7 +13,7 @@ var output;
 var combinedList = [];//NOTE:needs to be free
 var starredRepoURLs = [];//NOTE:needs to be free
 var starredRepoNumberCounter = 0;
-var token = "7551a76448099d2afb7f31b3b0945f97e8a47a59";
+var token = "4b132f91431915ab21e31ab608c70b347e53e373";
 var outputSent = 0;
 var inputUsername = "ckyue"
 var users = [inputUsername];
@@ -54,7 +54,7 @@ var GithubOAuth = function(){
 var getMoreUsers = function(){
   var options = {
     host :"api.github.com",
-    path : '/search/users?q=+followers:%3E1000&page=3&per_page=100',
+    path : '/search/users?q=+followers:%3E10000&page=1&per_page=100',
     method : 'GET',
     headers: {
       'User-Agent':'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0)'
