@@ -12,6 +12,7 @@
     "https": "latest",
     "sort-json": "latest",
     "json2csv": "latest",
-    "ya-csv": "latest"
+    "ya-csv": "latest",
+    "body-parser": "latest"
   }
 }

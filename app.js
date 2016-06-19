@@ -1,30 +1,26 @@
 var express = require('express');
+var bodyParser = require('body-parser');
 var app = express();
 var fs = require('fs');
 var https = require("https");
 var sortJson = require('sort-json');
 var json2csv = require('json2csv');
 // var async = require('async');
-var fields = ['url','Java', 'C', 'C++', 'Python', 'C#', 'PHP','JavaScript','Perl','Ruby','Swift','Objective-C','R','MATLAB','Scala','Shell','Lua','Haskell','Bash','Go','Lisp'];
+var fields = ['url','Java', 'C', 'C++', 'Python', 'C#', 'PHP','JavaScript','CoffeeScript','Ruby','Swift','Objective-C','Arduino','R','MATLAB','Scala','Shell','Lua','Haskell','Bash','Go','ActionScript'];
 var csv = require('ya-csv');
 var csvWriter = csv.createCsvFileWriter('dataset.csv');
 var dataArray = [];
-var output;
+var backendOutput;
 var combinedList = [];
 var starredRepoURLs = [];
 var starredRepoNumberCounter = 0;
 var token = "";
-var outputSent = 0;
-var inputUsername = "ckyue"
-var users = [inputUsername];
+var backendOutputSent = 0;
+var inputUsername = "";//NOTE: manually giving it value for debugging only
+var users = [];
 var userScrapedCounter = 0;
 
-app.get('/', function (req, res) {
-    //delete url key in JSON in output JSON response for pischen
-    delete output['url'];
-    res.send(output)
-});
-
+//Authenticate first with Github API v3
 var GithubOAuth = function(){
     var options = {
       host :"api.github.com",
@@ -52,6 +48,62 @@ var GithubOAuth = function(){
       request.end();
 }();
 
+//receiving post request from front end chrome extension
+app.use(bodyParser.json()); // support json encoded bodies
+app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
+// POST http://localhost:3000/user
+// parameters sent with
+app.post('/user', function(req, res) {
+    var reqUsername = req.body.username;
+    console.log(reqUsername);
+    inputUsername = reqUsername;
+    //post to somewhere, pischen figureing out
+    var postFromFrontEndFlag = 1;
+    GetUserOwnRepo(inputUsername,postFromFrontEndFlag)
+});
+
+
+//receiving post request from machine learning result
+app.post('/result', function(req, res) {
+    var resultReturned = req.body;
+});
+
+//*********************************************************************
+//Debugging usage, need to be changed to app.post for receving front end post
+app.get('/', function (req, res) {
+    //delete url key in JSON in backendOutput JSON response for pischen
+    // delete backendOutput['url'];
+    // res.send(backendOutput)
+    var postFromFrontEndFlag = 1;
+    GetUserOwnRepo("ckyue",postFromFrontEndFlag)
+});
+//*********************************************************************
+
+function postToBackEnd(data){
+  var options = {
+    host :"",
+    path : '',
+    method : 'POST',
+    headers: {
+      'User-Agent':'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0)'
+    }
+  }
+
+  var request = https.request(options, function(response){
+    var body = '';
+    response.on('data',function(chunk){
+      body+=chunk;
+    });
+    response.on('end',function(){
+      var json = JSON.parse(body);
+      console.log(json)
+    });
+  });
+  request.on('error', function(e) {
+    console.error('and the error is '+e);
+  });
+  request.end();
+}
 var getMoreUsers = function(){
   var options = {
     host :"api.github.com",
@@ -73,7 +125,7 @@ var getMoreUsers = function(){
       json.items.forEach(function(user){
         users.push(user.login);
       });
-      console.log(users)
+      // console.log(users)
       users.forEach(function(user){
         GetUserStarredRepo(user);
       });
@@ -121,7 +173,8 @@ function GetUserStarredRepo(username){
     request.end();
 }
 
-function GetUserOwnRepo(username){
+function GetUserOwnRepo(username, postFromFrontEndFlag){
+    // console.log(username)//all username scrap or requested
     var options = {
       host :"api.github.com",
       path : '/users/'+username+'/repos',
@@ -143,7 +196,12 @@ function GetUserOwnRepo(username){
         json.forEach(function(repo){
           languages.push(repo.language);
         });
-        calculateWeight(languages);
+        if(postFromFrontEndFlag == 1){
+            console.log("received post from Frontend, calculating Weight")
+            // console.log(languages)
+            calculateWeight(languages, postFromFrontEndFlag);
+        }
+        calculateWeight(languages, postFromFrontEndFlag);
       });
     });
     request.on('error', function(e) {
@@ -152,7 +210,7 @@ function GetUserOwnRepo(username){
     request.end();
 }
 
-function calculateWeight(arrayElements){
+function calculateWeight(arrayElements, postFromFrontEndFlag){
     var counts = {};
     arrayElements.forEach(function(x) {
         counts[x] = (counts[x] || 0)+1;
@@ -173,11 +231,17 @@ function calculateWeight(arrayElements){
     sortedList = JSON.stringify(sortedList).replace(/["]+/g, '').replace(/\\/g, "'").replace(/'/g, '"');
     sortedList = JSON.parse(sortedList);
     combinedList = combineJsonObj(sortedList)
-    if (outputSent == 0){
-      output = combinedList
-      // console.log(output)
-      outputSent = 1;//make sure it get called once, no url is feeded to output
+    if(postFromFrontEndFlag == 1){
+        console.log("calculated weight:" + JSON.stringify(combinedList));
+        //post to backend here
+        // postToBackEnd(combinedList);//disabled till pischen give me params
     }
+    // if (backendOutputSent == 0){
+    //   backendOutput = combinedList
+    //   // console.log(backendOutput)
+    //   // console.log(output)
+    //   backendOutputSent = 1;//make sure it get called once, no url is feeded to backendOutput
+    // }
     // console.log(combinedList);
     addToDataArray(combinedList);
     // exportToCSV(combinedList);
@@ -265,13 +329,13 @@ function asyncScrapUsers(){
   async.series([
     function getFirstFollowing(callback){
       getUsersFollowing(inputUsername);
-      console.log("getting")
+      // console.log("getting")
       callback();
     },
     function getSecondFollowing(callback){
-      console.log(users)
+      // console.log(users)
       users.forEach(function(secondRound){
-          console.log(secondRound)
+          // console.log(secondRound)
           // getUsersFollowing(secondRound);
       });
       callback();
@@ -305,7 +369,7 @@ function getUsersFollowing(input){
       json.forEach(function(user){
         users.push(user.login);
       });
-      console.log(users)
+      // console.log(users)
     });
   });
   request.on('error', function(e) {
