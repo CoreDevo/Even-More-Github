@@ -4,18 +4,23 @@ var fs = require('fs');
 var https = require("https");
 var sortJson = require('sort-json');
 var json2csv = require('json2csv');
+var async = require('async');
 var fields = ['JavaScript', 'Arduino', 'C++', 'Shell', 'HTML', 'CSS'];
 var csv = require('ya-csv');
 var csvWriter = csv.createCsvFileWriter('dataset.csv');
 var dataArray = [];
-var input;
+var output;
 var combinedList = [];//NOTE:needs to be free
 var starredRepoURLs = [];//NOTE:needs to be free
 var starredRepoNumberCounter = 0;
 var token = "";
-
+var outputSent = 0;
+var inputUsername = "ckyue"
+var users = [inputUsername];
 app.get('/', function (req, res) {
-    res.send(input)
+    //delete url key in JSON in output JSON response for pischen
+    delete output['url'];
+    res.send(output)
 });
 
 var GithubOAuth = function(){
@@ -45,7 +50,75 @@ var GithubOAuth = function(){
       request.end();
 }();
 
-//get more users
+var getMoreUsers = function(){
+
+    // Step(
+    //     function getFirstFollowing(){
+    //       getUsersFollowing(inputUsername);
+    //     },
+    //     function getSecondFollowing(){
+    //       console.log(users)
+    //       users.forEach(function(secondRound){
+    //           console.log(secondRound)
+    //           // getUsersFollowing(secondRound);
+    //       });
+    //     },
+    //     function logAllUsers(){
+    //       // console.log(users)
+    //     }
+    // );
+    async.series([
+      function getFirstFollowing(callback){
+        getUsersFollowing(inputUsername);
+        console.log("getting")
+        callback();
+      },
+      function getSecondFollowing(callback){
+        console.log(users)
+        users.forEach(function(secondRound){
+            console.log(secondRound)
+            getUsersFollowing(secondRound);
+        });
+        callback();
+      },
+      function logAllUsers(callback){
+        console.log(users)
+        callback();
+      }
+    ]);
+}();
+
+function getUsersFollowing(input){
+  var options = {
+    host :"api.github.com",
+    path : '/users/'+input+'/following',
+    method : 'GET',
+    headers: {
+      'User-Agent':'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0)',
+      'Authorization':'token '+ token
+    }
+  }
+
+  var request = https.request(options, function(response){
+    var body = '';
+    response.on('data',function(chunk){
+      body+=chunk;
+    });
+    response.on('end',function(){
+      var json = JSON.parse(body);
+      // console.log(json)
+      json.forEach(function(user){
+        users.push(user.login);
+      });
+      console.log(users)
+    });
+  });
+  request.on('error', function(e) {
+    console.error('and the error is '+e);
+  });
+  request.end();
+}
+
 GetUserStarredRepo("ckyue");//DEBUGGING
 function GetUserStarredRepo(username){
     var options = {
@@ -53,7 +126,8 @@ function GetUserStarredRepo(username){
       path : '/users/'+username+'/starred',
       method : 'GET',
       headers: {
-        'User-Agent':'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0)'
+        'User-Agent':'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0)',
+        'Authorization':'token '+ token
       }
     }
 
@@ -64,6 +138,7 @@ function GetUserStarredRepo(username){
       });
       response.on('end',function(){
         var json = JSON.parse(body);
+        // console.log(json)
         json.forEach(function(repo){
           starredRepoURLs.push(repo.html_url);
         });
@@ -76,7 +151,6 @@ function GetUserStarredRepo(username){
     request.on('error', function(e) {
       console.error('and the error is '+e);
     });
-    console.log("get starred request end");
     request.end();
 }
 
@@ -85,7 +159,10 @@ function GetUserOwnRepo(username){
       host :"api.github.com",
       path : '/users/'+username+'/repos',
       method : 'GET',
-      headers: {'User-Agent':'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0)'}
+      headers: {
+        'User-Agent':'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0)',
+        'Authorization':'token '+ token
+    }
     }
 
     var request = https.request(options, function(response){
@@ -129,6 +206,11 @@ function calculateWeight(arrayElements){
     sortedList = JSON.stringify(sortedList).replace(/["]+/g, '').replace(/\\/g, "'").replace(/'/g, '"');
     sortedList = JSON.parse(sortedList);
     combinedList = combineJsonObj(sortedList)
+    if (outputSent == 0){
+      output = combinedList
+      // console.log(output)
+      outputSent = 1;//make sure it get called once, no url is feeded to output
+    }
     // console.log(combinedList);
     addToDataArray(combinedList);
     // exportToCSV(combinedList);
@@ -150,7 +232,7 @@ function addToDataArray(list){
       // console.log(string)
       dataArray.push(JSON.parse(string));
     })
-    console.log(dataArray);
+    // console.log(dataArray);
 }
 function combineJsonObj(source) {
     var result = {};
