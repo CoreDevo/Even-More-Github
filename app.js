@@ -13,7 +13,7 @@ var output;
 var combinedList = [];//NOTE:needs to be free
 var starredRepoURLs = [];//NOTE:needs to be free
 var starredRepoNumberCounter = 0;
-var token = "4b132f91431915ab21e31ab608c70b347e53e373";
+var token = "";
 var outputSent = 0;
 var inputUsername = "ckyue"
 var users = [inputUsername];
