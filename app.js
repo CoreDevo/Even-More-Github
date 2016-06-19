@@ -5,7 +5,7 @@ var https = require("https");
 var sortJson = require('sort-json');
 var json2csv = require('json2csv');
 var async = require('async');
-var fields = ['JavaScript', 'Arduino', 'C++', 'Shell', 'HTML', 'CSS'];
+var fields = ['url','Java', 'C', 'C++', 'Python', 'C#', 'PHP','JavaScript','Perl','Ruby','Swift','Objective-C','R','MATLAB','Scala','Shell','Lua','Haskell','Bash','Go','Lisp'];
 var csv = require('ya-csv');
 var csvWriter = csv.createCsvFileWriter('dataset.csv');
 var dataArray = [];
@@ -13,10 +13,11 @@ var output;
 var combinedList = [];//NOTE:needs to be free
 var starredRepoURLs = [];//NOTE:needs to be free
 var starredRepoNumberCounter = 0;
-var token = "";
+var token = "7551a76448099d2afb7f31b3b0945f97e8a47a59";
 var outputSent = 0;
 var inputUsername = "ckyue"
 var users = [inputUsername];
+var userScrapedCounter = 0;
 app.get('/', function (req, res) {
     //delete url key in JSON in output JSON response for pischen
     delete output['url'];
@@ -51,41 +52,36 @@ var GithubOAuth = function(){
 }();
 
 var getMoreUsers = function(){
+  var options = {
+    host :"api.github.com",
+    path : '/search/users?q=+followers:%3E1000&page=3&per_page=100',
+    method : 'GET',
+    headers: {
+      'User-Agent':'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0)'
+    }
+  }
 
-    // Step(
-    //     function getFirstFollowing(){
-    //       getUsersFollowing(inputUsername);
-    //     },
-    //     function getSecondFollowing(){
-    //       console.log(users)
-    //       users.forEach(function(secondRound){
-    //           console.log(secondRound)
-    //           // getUsersFollowing(secondRound);
-    //       });
-    //     },
-    //     function logAllUsers(){
-    //       // console.log(users)
-    //     }
-    // );
-    async.series([
-      function getFirstFollowing(callback){
-        getUsersFollowing(inputUsername);
-        console.log("getting")
-        callback();
-      },
-      function getSecondFollowing(callback){
-        console.log(users)
-        users.forEach(function(secondRound){
-            console.log(secondRound)
-            getUsersFollowing(secondRound);
-        });
-        callback();
-      },
-      function logAllUsers(callback){
-        console.log(users)
-        callback();
-      }
-    ]);
+  var request = https.request(options, function(response){
+    var body = '';
+    response.on('data',function(chunk){
+      body+=chunk;
+    });
+    response.on('end',function(){
+      var json = JSON.parse(body);
+      // console.log(json)
+      json.items.forEach(function(user){
+        users.push(user.login);
+      });
+      console.log(users)
+      users.forEach(function(user){
+        GetUserStarredRepo(user);
+      });
+    });
+  });
+  request.on('error', function(e) {
+    console.error('and the error is '+e);
+  });
+  request.end();
 }();
 
 function getUsersFollowing(input){
@@ -119,7 +115,7 @@ function getUsersFollowing(input){
   request.end();
 }
 
-GetUserStarredRepo("ckyue");//DEBUGGING
+// GetUserStarredRepo("ckyue");//DEBUGGING
 function GetUserStarredRepo(username){
     var options = {
       host :"api.github.com",
@@ -140,12 +136,13 @@ function GetUserStarredRepo(username){
         var json = JSON.parse(body);
         // console.log(json)
         json.forEach(function(repo){
+          // console.log(repo.html_url)
           starredRepoURLs.push(repo.html_url);
         });
           // console.log(starredRepoURLs);
           starredRepoNumberCounter = starredRepoURLs.length;//NOTE: max of 30 repos returned by github api
           // console.log(starredRepoNumberCounter)
-          GetUserOwnRepo("ckyue");//DEBUGGING
+          GetUserOwnRepo(username);//DEBUGGING
       });
     });
     request.on('error', function(e) {
@@ -215,10 +212,10 @@ function calculateWeight(arrayElements){
     addToDataArray(combinedList);
     // exportToCSV(combinedList);
 }
-
 function addToDataArray(list){
   //TODO:format data array by number of user starred repo
     // console.log(starredRepoURLs)
+    userScrapedCounter++;
     list["url"] = ""
     var dataArrayStrings = [];
     starredRepoURLs.forEach(function(repoLink){
@@ -232,6 +229,11 @@ function addToDataArray(list){
       // console.log(string)
       dataArray.push(JSON.parse(string));
     })
+
+    if(userScrapedCounter == users.length){
+        console.log("all scraped")
+        exportToCSV(dataArray);
+    }
     // console.log(dataArray);
 }
 function combineJsonObj(source) {
@@ -276,7 +278,7 @@ function exportToCSV(list){
   //combinedList is an array of JSON objects
     json2csv({ data: list, fields: fields }, function(err, csv) {
         if (err) console.log(err);
-          console.log(csv);
+          // console.log(csv);
           fs.writeFile('dataset.csv', csv, function(err) {
             if (err) throw err;
             console.log('file saved');
@@ -287,3 +289,26 @@ function exportToCSV(list){
 app.listen(3000, function () {
   console.log('listening on port 3000');
 });
+
+//bu yong le zanshi......
+function asyncScrapUsers(){
+  async.series([
+    function getFirstFollowing(callback){
+      getUsersFollowing(inputUsername);
+      console.log("getting")
+      callback();
+    },
+    function getSecondFollowing(callback){
+      console.log(users)
+      users.forEach(function(secondRound){
+          console.log(secondRound)
+          // getUsersFollowing(secondRound);
+      });
+      callback();
+    },
+    function logAllUsers(callback){
+      // console.log(users)
+      callback();
+    }
+  ]);
+}
