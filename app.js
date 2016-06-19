@@ -12,6 +12,7 @@ var input;
 var combinedList = [];//NOTE:needs to be free
 var starredRepoURLs = [];//NOTE:needs to be free
 var starredRepoNumberCounter = 0;
+var token = "";
 
 app.get('/', function (req, res) {
     res.send(input)
@@ -24,7 +25,7 @@ var GithubOAuth = function(){
       method : 'POST',
       headers: {
         'User-Agent':'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0)',
-        'Authorization':'token '+'417b00012e761b62fb8a99d4ef12f70f6370118a'
+        'Authorization':'token '+ token
       }
     }
 
@@ -75,7 +76,7 @@ function GetUserStarredRepo(username){
     request.on('error', function(e) {
       console.error('and the error is '+e);
     });
-    console.log("get starred request end")
+    console.log("get starred request end");
     request.end();
 }
 
@@ -147,9 +148,9 @@ function addToDataArray(list){
     //inflate strings into JSON again due to that issue LOL
     dataArrayStrings.forEach(function(string){
       // console.log(string)
-      dataArray.push(JSON.parse(string))
+      dataArray.push(JSON.parse(string));
     })
-    console.log(dataArray)
+    console.log(dataArray);
 }
 function combineJsonObj(source) {
     var result = {};
