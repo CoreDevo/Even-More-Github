@@ -14,7 +14,7 @@ var backendOutput;
 var combinedList = [];
 var starredRepoURLs = [];
 var starredRepoNumberCounter = 0;
-var token = '5aa309c87dd4c3a88d4fbc00d4f74613341be772';
+var token = '';
 var backendOutputSent = 0;
 var inputUsername = "";//NOTE: manually giving it value for debugging only
 var users = [];
