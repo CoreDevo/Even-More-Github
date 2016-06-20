@@ -14,7 +14,7 @@ var backendOutput;
 var combinedList = [];
 var starredRepoURLs = [];
 var starredRepoNumberCounter = 0;
-var token = '';
+var token = '5aa309c87dd4c3a88d4fbc00d4f74613341be772';
 var backendOutputSent = 0;
 var inputUsername = "";//NOTE: manually giving it value for debugging only
 var users = [];
@@ -59,7 +59,9 @@ app.post('/user', function(req, res) {
     inputUsername = reqUsername;
     //post to somewhere, pischen figureing out
     var postFromFrontEndFlag = 1;
-    GetUserOwnRepo(inputUsername,postFromFrontEndFlag)
+    GetUserOwnRepo(inputUsername,postFromFrontEndFlag)// postToBackEnd(combinedList);
+    //need to send back response
+    res.send("STUFF RETURNED FROM MACHINE LEARNING");
 });
 
 
@@ -96,7 +98,7 @@ function postToBackEnd(data){
     });
     response.on('end',function(){
       var json = JSON.parse(body);
-      console.log(json)
+      console.log(json)//rep
     });
   });
   request.on('error', function(e) {
