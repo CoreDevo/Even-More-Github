@@ -77,7 +77,7 @@ app.get('/', function (req, res) {
     // delete backendOutput['url'];
     // res.send(backendOutput)
     var postFromFrontEndFlag = 1;
-    GetUserOwnRepo("ckyue",postFromFrontEndFlag)
+    GetUserOwnRepo("ckyue",postFromFrontEndFlag)//for testing purpose
 });
 //*********************************************************************
 
@@ -248,7 +248,6 @@ function calculateWeight(arrayElements, postFromFrontEndFlag){
     // }
     // console.log(combinedList);
     addToDataArray(combinedList);
-    // exportToCSV(combinedList);
 }
 function addToDataArray(list){
   //TODO:format data array by number of user starred repo
