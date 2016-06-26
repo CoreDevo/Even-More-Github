@@ -61,7 +61,7 @@ app.post('/user', function(req, res) {
     var postFromFrontEndFlag = 1;
     GetUserOwnRepo(inputUsername,postFromFrontEndFlag)// postToBackEnd(combinedList);
     //need to send back response
-    res.send("STUFF RETURNED FROM MACHINE LEARNING");
+    res.send("STUFF RETURNED FROM MACHINE LEARNING FOR: " + reqUsername);//test for Teakay
 });
 
 
