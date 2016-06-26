@@ -50,7 +50,7 @@ var GithubOAuth = function(){
 
 //receiving post request from front end chrome extension
 app.use(bodyParser.json()); // support json encoded bodies
-// app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
+app.use(bodyParser.urlencoded({ extended: false })); // support encoded bodies
 // POST http://localhost:3000/user
 // parameters sent with
 app.post('/user', function(req, res) {
