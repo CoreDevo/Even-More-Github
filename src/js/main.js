@@ -6,29 +6,48 @@
 var name = $('.header-nav-current-user > strong').text();
 if (name && name != '') {
 	alert(name);
+	$.ajax ({
+		url: 'http://159.203.20.249:27182/user',
+		type: 'POST',
+		contentType: 'application/x-www-form-urlencoded',
+		charset: 'UTF-8',
+		data: {
+			username: name
+		},
+		success: function(data) {
+			console.log(data);
+			//updateView();
+		}, 
+		error: function(e){
+			console.log(e);
+		}
+	})
 }
 
-var element = ["<div id='extension' class='boxed-group flush' role='navigation'>", 
-				"<h3>Recommended Repositories</h3>", 
-				"<ul id='extension-ul' class='boxed-group-inner mini-repo-list'>",
-				"</ul>",
-				"</div>"].join('');
+function updateView() {
 
-var svg = '<svg aria-hidden="true" class="octicon octicon-repo repo-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12"><path d="M4 9h-1v-1h1v1z m0-3h-1v1h1v-1z m0-2h-1v1h1v-1z m0-2h-1v1h1v-1z m8-1v12c0 0.55-0.45 1-1 1H6v2l-1.5-1.5-1.5 1.5V14H1c-0.55 0-1-0.45-1-1V1C0 0.45 0.45 0 1 0h10c0.55 0 1 0.45 1 1z m-1 10H1v2h2v-1h3v1h5V11z m0-10H2v9h9V1z"></path></svg>';
+	var element = ["<div id='extension' class='boxed-group flush' role='navigation'>", 
+					"<h3>Recommended Repositories</h3>", 
+					"<ul id='extension-ul' class='boxed-group-inner mini-repo-list'>",
+					"</ul>",
+					"</div>"].join('');
 
-var fakeElement = ["<li class='public source'>",
-					"<a href='/CoreDevo/ExpresSJ' class='mini-repo-list-item css-truncate' data-ga-click='Dashboard, click, Popular repos list item - context:user visibility:public fork:false'>",
-					svg,
-					"<span class='repo-and-owner css-truncate-target'>",
-					"<span class='owner css-truncate-target' title='CoreDevo'>CoreDevo</span>",
-					"/",
-					"<span class='repo' title='ExpresSJ'>ExpresSJ</span>",
-					"</span></a></li>"].join('');
+	var svg = '<svg aria-hidden="true" class="octicon octicon-repo repo-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12"><path d="M4 9h-1v-1h1v1z m0-3h-1v1h1v-1z m0-2h-1v1h1v-1z m0-2h-1v1h1v-1z m8-1v12c0 0.55-0.45 1-1 1H6v2l-1.5-1.5-1.5 1.5V14H1c-0.55 0-1-0.45-1-1V1C0 0.45 0.45 0 1 0h10c0.55 0 1 0.45 1 1z m-1 10H1v2h2v-1h3v1h5V11z m0-10H2v9h9V1z"></path></svg>';
 
-$('.dashboard-sidebar').append(element);
-$('#extension').css("margin-top", "20px");
-$('#extension-ul').append(fakeElement);
-$('#extension-ul').append(fakeElement);
-$('#extension-ul').append(fakeElement);
-$('#extension-ul').append(fakeElement);
-$('#extension-ul').append(fakeElement);
+	var fakeElement = ["<li class='public source'>",
+						"<a href='/CoreDevo/ExpresSJ' class='mini-repo-list-item css-truncate' data-ga-click='Dashboard, click, Popular repos list item - context:user visibility:public fork:false'>",
+						svg,
+						"<span class='repo-and-owner css-truncate-target'>",
+						"<span class='owner css-truncate-target' title='CoreDevo'>CoreDevo</span>",
+						"/",
+						"<span class='repo' title='ExpresSJ'>ExpresSJ</span>",
+						"</span></a></li>"].join('');
+
+	$('.dashboard-sidebar').append(element);
+	$('#extension').css("margin-top", "20px");
+	$('#extension-ul').append(fakeElement);
+	$('#extension-ul').append(fakeElement);
+	$('#extension-ul').append(fakeElement);
+	$('#extension-ul').append(fakeElement);
+	$('#extension-ul').append(fakeElement);
+}
