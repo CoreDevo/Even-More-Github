@@ -7,7 +7,7 @@ var name = $('.header-nav-current-user > strong').text();
 if (name && name != '') {
 	alert(name);
 	$.ajax ({
-		url: 'http://159.203.20.249:27182/user',
+		url: 'https://a8590977.ngrok.io/user',
 		type: 'POST',
 		contentType: 'application/x-www-form-urlencoded',
 		charset: 'UTF-8',
@@ -16,7 +16,7 @@ if (name && name != '') {
 		},
 		success: function(data) {
 			console.log(data);
-			//updateView();
+			updateView();
 		}, 
 		error: function(e){
 			console.log(e);
@@ -43,7 +43,7 @@ function updateView() {
 						"<span class='repo' title='ExpresSJ'>ExpresSJ</span>",
 						"</span></a></li>"].join('');
 
-	$('.dashboard-sidebar').append(element);
+	$('.js-repo-list').append(element);
 	$('#extension').css("margin-top", "20px");
 	$('#extension-ul').append(fakeElement);
 	$('#extension-ul').append(fakeElement);

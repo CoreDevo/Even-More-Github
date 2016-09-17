@@ -122,7 +122,7 @@ function postToBackEnd(data){
     });
     response.on('end',function(){
       var json = JSON.parse(body);
-      console.log(json)//rep
+      // console.log(json)//rep
     });
   });
   request.on('error', function(e) {
@@ -185,6 +185,7 @@ function GetUserStarredRepo(username){
       response.on('end',function(){
         var json = JSON.parse(body);
         // console.log(json)
+        if (!json.forEach) return;
         json.forEach(function(repo){
           // console.log(repo.html_url)
           starredRepoURLs.push(repo.html_url);
@@ -221,6 +222,7 @@ function GetUserOwnRepo(username, postFromFrontEndFlag){
       response.on('end',function(){
         var json = JSON.parse(body);
         var languages = [];
+        if(!json.forEach) return;
         json.forEach(function(repo){
           languages.push(repo.language);
         });
@@ -393,6 +395,7 @@ function getUsersFollowing(input){
     response.on('end',function(){
       var json = JSON.parse(body);
       // console.log(json)
+      if(!json.forEach)return;
       json.forEach(function(user){
         users.push(user.login);
       });
