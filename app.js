@@ -14,7 +14,7 @@ var backendOutput;
 var combinedList = [];
 var starredRepoURLs = [];
 var starredRepoNumberCounter = 0;
-var token = 'd7eb3827b1d5e04a15eeed2127162132f995f327';
+var token = '';
 var backendOutputSent = 0;
 var inputUsername = "";//NOTE: manually giving it value for debugging only
 var users = [];
@@ -102,7 +102,7 @@ app.get('/', function (req, res) {
     // res.send(backendOutput)
     console.log("/ GET")
     var postFromFrontEndFlag = 1;
-    // GetUserOwnRepo("ckyue",postFromFrontEndFlag)//for testing purpose
+    GetUserOwnRepo("ckyue",postFromFrontEndFlag,res)//for testing purpose
 });
 //*********************************************************************
 
@@ -243,6 +243,44 @@ function GetUserOwnRepo(username, postFromFrontEndFlag, res){
 
 function calculateWeight(arrayElements, postFromFrontEndFlag){
     var counts = {};
+    var requestBody = {
+      "Inputs": {
+        "input1": {
+          "ColumnNames": [
+            "url",
+            "HTML",
+            "CSS",
+            "Java",
+            "C",
+            "C++",
+            "Python",
+            "C#",
+            "PHP",
+            "JavaScript",
+            "CoffeeScript",
+            "Ruby",
+            "Swift",
+            "Objective-C",
+            "Arduino",
+            "R",
+            "Scala",
+            "Shell",
+            "Lua",
+            "Haskell",
+            "Go",
+            "ActionScript"
+          ],
+          "Values": [
+            [
+              "value"
+            ]
+          ]
+        }
+      },
+      "GlobalParameters": {}
+  };
+
+    // console.log(requestBody.Inputs)
     arrayElements.forEach(function(x) {
         counts[x] = (counts[x] || 0)+1;
     });
@@ -264,6 +302,23 @@ function calculateWeight(arrayElements, postFromFrontEndFlag){
     combinedList = combineJsonObj(sortedList)
     if(postFromFrontEndFlag == 1){
         console.log("calculated weight:" + JSON.stringify(combinedList));
+        requestBody.Inputs.input1.ColumnNames.forEach(function(entry){
+            var value;
+            if(combinedList[entry] == undefined){
+                value = 0
+            }
+            else{
+                value = combinedList[entry]
+            }
+            if(entry != "url"){
+            requestBody.Inputs.input1.Values[0].push(value.toString());
+            }
+        });
+        // console.log(requestBody.Inputs.input1.Values[0])
+        // console.log(requestBody.Inputs.input1.Values[0].length)
+        // console.log(requestBody.Inputs.input1.ColumnNames.length)
+        console.log(requestBody)
+
         //post to backend here
         // postToBackEnd(combinedList);//disabled till pischen give me params
     }
@@ -350,7 +405,7 @@ function exportToCSV(list){
         });
 }
 
-app.listen(443, function () {
+app.listen(3000, function () {
   console.log('listening on port 443');
 });
 
