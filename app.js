@@ -14,7 +14,7 @@ var backendOutput;
 var combinedList = [];
 var starredRepoURLs = [];
 var starredRepoNumberCounter = 0;
-var token = '';
+var token = '5face14f010ad6dc8dcdedc6e7c82a305b121fb2';
 var backendOutputSent = 0;
 var inputUsername = "";//NOTE: manually giving it value for debugging only
 var users = [];
@@ -58,17 +58,32 @@ app.use(function(req, res, next) {
     next();
 });
 
-// POST http://localhost:3000/user
+// GET http://localhost:443/user
 // parameters sent with
-app.post('/user', function(req, res) {
-    console.log(req.body);
-    var reqUsername = req.body.username;
+app.get('/user', function(req, res) {
+    //For GET
+    var reqUsername = req.query.username; // $_GET["username"]
     console.log("Received username " + reqUsername);
-    inputUsername = reqUsername;
+
     //post to somewhere, pischen figureing out
     var postFromFrontEndFlag = 1;
-    GetUserOwnRepo(inputUsername,postFromFrontEndFlag)// postToBackEnd(combinedList);
+    GetUserOwnRepo(reqUsername,postFromFrontEndFlag)// postToBackEnd(combinedList);
     //need to send back response
+    res.send("STUFF RETURNED FROM MACHINE LEARNING FOR: " + reqUsername);//test for Teakay
+});
+
+// GET http://localhost:443/user
+// parameters sent with
+app.post('/user', function(req, res) {
+    //For POST from body
+    var reqUsername = req.body.username;
+    console.log("Received username " + reqUsername);
+
+
+    //post to somewhere, pischen figureing out
+    var postFromFrontEndFlag = 1;
+    GetUserOwnRepo(reqUsername,postFromFrontEndFlag)// postToBackEnd(combinedList);
+    // need to send back response
     res.send("STUFF RETURNED FROM MACHINE LEARNING FOR: " + reqUsername);//test for Teakay
 });
 
@@ -84,8 +99,9 @@ app.get('/', function (req, res) {
     //delete url key in JSON in backendOutput JSON response for pischen
     // delete backendOutput['url'];
     // res.send(backendOutput)
+    console.log("/ GET")
     var postFromFrontEndFlag = 1;
-    GetUserOwnRepo("ckyue",postFromFrontEndFlag)//for testing purpose
+    // GetUserOwnRepo("ckyue",postFromFrontEndFlag)//for testing purpose
 });
 //*********************************************************************
 
