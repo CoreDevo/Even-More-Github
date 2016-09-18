@@ -14,7 +14,7 @@ var backendOutput;
 var combinedList = [];
 var starredRepoURLs = [];
 var starredRepoNumberCounter = 0;
-var token = '';
+var token = '37d671c3b8079aa466647a7bdf535a67ce3705bf';
 var backendOutputSent = 0;
 var inputUsername = "";//NOTE: manually giving it value for debugging only
 var users = [];
@@ -106,13 +106,14 @@ app.get('/', function (req, res) {
 });
 //*********************************************************************
 
-function postToBackEnd(data){
+function postToBackEnd(requestBody, res){
   var options = {
-    host :"",
-    path : '',
+    host :"ussouthcentral.services.azureml.net",
+    path : '/workspaces/f5bca8c02b6f4068afc865095eaf914e/services/38be572e4b2240c19c07a070d4a14623/execute?api-version=2.0&details=true',
     method : 'POST',
     headers: {
-      'User-Agent':'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0)'
+      'Authorization':'Bearer FJRLgRIVAj60GbOPu594KBMBfB4d00kLcgVA/ewc2oGKoX0EMqYYABm82w4HwFhddkISeNFk4ADePPxDavjcDg==',
+      'Content-Type':'application/json'
     }
   }
 
@@ -123,9 +124,49 @@ function postToBackEnd(data){
     });
     response.on('end',function(){
       var json = JSON.parse(body);
-      console.log(json)//rep
+      var unsortedScores = {}
+      var valCounter = 0;
+
+    //   console.log(json.Results.output1.value.ColumnNames)
+    // console.log(json.Results.output1.value.ColumnNames.length)
+    // console.log(json.Results.output1.value.Values[0].length)
+
+      json.Results.output1.value.ColumnNames.forEach(function(entry){
+        //   console.log(entry)
+          var entryName = entry.match(/\w+|"[^"]+"/g)[4];
+          if(entryName != undefined){
+              entryName = entryName.replace(/"/g, "");
+          }else {
+              entryName = "Best Fit"
+          }
+          unsortedScores[entryName] = json.Results.output1.value.Values[0][valCounter];
+          valCounter++;
+     });
+
+     // Create items array
+        var sortedScores = Object.keys(unsortedScores).map(function(key) {
+            return [key, unsortedScores[key]];
+        });
+
+        // Sort the array based on the second element
+        sortedScores.sort(function(first, second) {
+            return second[1] - first[1];
+        });
+        var recommendation = {
+          "data": [
+          ]
+        }
+        for(var i = 0; i < 10; i++){
+            recommendation.data.push(sortedScores[i][0])
+        }
+        res.send(recommendation);//test for Teakay
+
     });
   });
+
+  //write request body
+  request.write(JSON.stringify(requestBody));
+
   request.on('error', function(e) {
     console.error('and the error is '+e);
   });
@@ -230,8 +271,7 @@ function GetUserOwnRepo(username, postFromFrontEndFlag, res){
         if(postFromFrontEndFlag == 1){
             console.log("received post from Frontend, calculating Weight")
             // console.log(languages)
-            calculateWeight(languages, postFromFrontEndFlag);
-            res.send("STUFF RETURNED FROM MACHINE LEARNING");//test for Teakay
+            calculateWeight(languages, postFromFrontEndFlag, res);
         }
       });
     });
@@ -241,7 +281,7 @@ function GetUserOwnRepo(username, postFromFrontEndFlag, res){
     request.end();
 }
 
-function calculateWeight(arrayElements, postFromFrontEndFlag){
+function calculateWeight(arrayElements, postFromFrontEndFlag, res){
     var counts = {};
     var requestBody = {
       "Inputs": {
@@ -316,11 +356,12 @@ function calculateWeight(arrayElements, postFromFrontEndFlag){
         });
         // console.log(requestBody.Inputs.input1.Values[0])
         // console.log(requestBody.Inputs.input1.Values[0].length)
-        // console.log(requestBody.Inputs.input1.ColumnNames.length)
-        console.log(requestBody)
+        // console.log(requestBody.Inputs.input1.ColumnNames)
+        // console.log(requestBody)
 
         //post to backend here
-        // postToBackEnd(combinedList);//disabled till pischen give me params
+
+        postToBackEnd(requestBody, res);
     }
     // if (backendOutputSent == 0){
     //   backendOutput = combinedList
