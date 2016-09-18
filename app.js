@@ -160,6 +160,7 @@ function postToBackEnd(requestBody, res){
             recommendation.data.push(sortedScores[i][0])
         }
         res.send(recommendation);//for Frontend
+        console.log(recommendation.data)
     });
   });
 
