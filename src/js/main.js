@@ -5,7 +5,7 @@
 
 var name = $('.header-nav-current-user > strong').text();
 if (name && name != '') {
-	//alert(name);
+	alert(name);
 	$.ajax ({
 		url: 'https://a8590977.ngrok.io/user',
 		type: 'POST',
@@ -27,6 +27,7 @@ if (name && name != '') {
 }
 
 function loopToCache(arr) {
+
 	chrome.storage.local.clear();
 	for(var idx in arr) {
 		var curr = arr[idx].replace('https://github.com','');
