@@ -157,7 +157,8 @@ function postToBackEnd(requestBody, res){
           ]
         }
         for(var i = 0; i < 10; i++){
-            recommendation.data.push(sortedScores[i][0])
+            var rand = getRandomInt(0, 50);
+            recommendation.data.push(sortedScores[rand][0])
         }
         res.send(recommendation);//for Frontend
         console.log(recommendation.data)
@@ -505,4 +506,9 @@ function getUsersFollowing(input){
     console.error('and the error is '+e);
   });
   request.end();
+}
+
+//random whole num
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
