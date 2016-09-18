@@ -3,9 +3,16 @@ if [ $# -ne 1 ]; then
     exit 1
 fi
 
-if [ ! `which nodejs` ]; then
-    echo "nodejs needed, but not found, set in PATH?"
+program=
+if [ `which nodejs` ]; then
+    program="nodejs"
+elif [ `which node` ]; then
+    program="node"
+else
+    echo "please install node or nodejs "
+    exit 1
 fi
+
 token=$1
-echo "var token=${token}" > src/js/token.js
-nodejs app.js
+echo "var token='${token}'" > src/js/token.js
+$program app.js
