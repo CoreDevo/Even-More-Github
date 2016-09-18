@@ -14,7 +14,7 @@ var backendOutput;
 var combinedList = [];
 var starredRepoURLs = [];
 var starredRepoNumberCounter = 0;
-var token = '37d671c3b8079aa466647a7bdf535a67ce3705bf';
+var token = '';
 var backendOutputSent = 0;
 var inputUsername = "";//NOTE: manually giving it value for debugging only
 var users = [];
@@ -160,7 +160,6 @@ function postToBackEnd(requestBody, res){
             recommendation.data.push(sortedScores[i][0])
         }
         res.send(recommendation);//test for Teakay
-
     });
   });
 
@@ -229,6 +228,7 @@ function GetUserStarredRepo(username){
       response.on('end',function(){
         var json = JSON.parse(body);
         // console.log(json)
+        if (!json.forEach) return;
         json.forEach(function(repo){
           // console.log(repo.html_url)
           starredRepoURLs.push(repo.html_url);
@@ -265,6 +265,7 @@ function GetUserOwnRepo(username, postFromFrontEndFlag, res){
       response.on('end',function(){
         var json = JSON.parse(body);
         var languages = [];
+        if(!json.forEach) return;
         json.forEach(function(repo){
           languages.push(repo.language);
         });
@@ -492,6 +493,7 @@ function getUsersFollowing(input){
     response.on('end',function(){
       var json = JSON.parse(body);
       // console.log(json)
+      if(!json.forEach)return;
       json.forEach(function(user){
         users.push(user.login);
       });
