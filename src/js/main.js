@@ -51,14 +51,7 @@ function loopToCache(arr) {
 
 function setPopOverBox(idx,data){
     var popOverContainer = ['<div class="boxed-group js-repo-filter flush pop-over-box" role="navigation">',
-                            '<h3>',
-                                '<span style="float:right">',
-                                'Star',
-                                '<span class="counter">',
-                                  '8',
-                                '</span>',
-                                '</span>',
-                            '</h3>',
+                            '<h3>This is Title</h3>',
                             '<div class="boxed-group-inner">',
                             '<div style="height: 200px"></div>',
                             '</div>',
