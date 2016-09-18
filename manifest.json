@@ -7,6 +7,9 @@
   "permissions": [
     "storage"
   ],
+  "background": {
+    "page": "src/html/background.html"
+  },
   "icons": {
     "48": "src/icons/icon48.png",
     "128": "src/icons/icon128.png"

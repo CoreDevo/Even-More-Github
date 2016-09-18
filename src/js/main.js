@@ -7,7 +7,7 @@ var name = $('.header-nav-current-user > strong').text();
 if (name && name != '') {
 	//alert(name);
 	$.ajax ({
-		url: 'https://af7975ba.ngrok.io/user/',
+		url: 'https://6dfafc12.ngrok.io/user',
 		type: 'POST',
 		contentType: 'application/x-www-form-urlencoded',
 		charset: 'UTF-8',
@@ -16,7 +16,9 @@ if (name && name != '') {
 		},
 		success: function(data) {
 			console.log(data);
-			updateView();
+			var arr = data['data'];
+			loopToCache(arr);
+			updateView(arr);
 		}, 
 		error: function(e){
 			console.log(e);
@@ -24,7 +26,30 @@ if (name && name != '') {
 	})
 }
 
-function updateView() {
+function loopToCache(arr) {
+	chrome.storage.local.clear();
+	for(var idx in arr) {
+		var curr = arr[idx].replace('https://github.com','');
+		var temp = arr[idx];
+		(function(ele){
+			$.ajax ({
+				url: 'https://api.github.com/repos' + curr + '?access_token=' + token,
+				type: 'GET',
+				charset: 'UTF-8',
+				success: function(data) {
+					var obj = {};
+					obj[ele] = data;
+					chrome.storage.local.set(obj);
+				}, 
+				error: function(e){
+					console.log(e);
+				}
+			});
+		})(temp);
+	}
+}
+
+function updateView(arr) {
 
 	var element = ["<div id='extension' class='boxed-group flush' role='navigation'>", 
 					"<h3>Recommended Repositories <span class='counter'>5</span></h3>", 
@@ -34,20 +59,32 @@ function updateView() {
 
 	var svg = '<svg aria-hidden="true" class="octicon octicon-repo repo-icon" height="16" version="1.1" viewBox="0 0 12 16" width="12"><path d="M4 9h-1v-1h1v1z m0-3h-1v1h1v-1z m0-2h-1v1h1v-1z m0-2h-1v1h1v-1z m8-1v12c0 0.55-0.45 1-1 1H6v2l-1.5-1.5-1.5 1.5V14H1c-0.55 0-1-0.45-1-1V1C0 0.45 0.45 0 1 0h10c0.55 0 1 0.45 1 1z m-1 10H1v2h2v-1h3v1h5V11z m0-10H2v9h9V1z"></path></svg>';
 
-	var fakeElement = ["<li class='public source'>",
-						"<a href='/CoreDevo/ExpresSJ' class='mini-repo-list-item css-truncate' data-ga-click='Dashboard, click, Popular repos list item - context:user visibility:public fork:false'>",
-						svg,
-						"<span class='repo-and-owner css-truncate-target'>",
-						"<span class='owner css-truncate-target' title='CoreDevo'>CoreDevo</span>",
-						"/",
-						"<span class='repo' title='ExpresSJ'>ExpresSJ</span>",
-						"</span></a></li>"].join('');
 
 	$('.dashboard-sidebar').prepend(element);
 	$('#extension').css("margin-top", "20px");
-	$('#extension-ul').append(fakeElement);
-	$('#extension-ul').append(fakeElement);
-	$('#extension-ul').append(fakeElement);
-	$('#extension-ul').append(fakeElement);
-	$('#extension-ul').append(fakeElement);
+
+	for(var idx in arr) {
+
+		var curr = arr[idx].replace('https://github.com','');
+		var usrrepo = curr.split('/');
+
+		var ele = ["<li class='public source'>",
+					"<a href='" + curr +  "' class='mini-repo-list-item css-truncate' data-ga-click='Dashboard, click, Popular repos list item - context:user visibility:public fork:false'>",
+					svg,
+					"<span class='repo-and-owner css-truncate-target'>",
+					"<span class='owner css-truncate-target' title='" + usrrepo[1]+ "'>" + usrrepo[1] + "</span>",
+					"/",
+					"<span class='repo' title='" + usrrepo[2] + "'>" + usrrepo[2] + "</span>",
+					"</span></a></li>"].join('');
+
+		$('#extension-ul').append(ele);
+	}
+
+	$('#extension-ul li a').on("mouseover", function(e){
+		var url = this.href;
+		e.preventDefault();
+		chrome.storage.local.get(url, function(items){
+			console.log(items);
+		})
+	});
 }
