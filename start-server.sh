@@ -14,5 +14,7 @@ else
 fi
 
 token=$1
-echo "var token='${token}'" > src/js/token.js
+echo "var token='${token}';" > src/js/token.js
+echo "export=token;"
 $program app.js
+
