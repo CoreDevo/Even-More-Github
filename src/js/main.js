@@ -27,7 +27,7 @@ if (name && name != '') {
 
 function loopToCache(arr) {
 	chrome.storage.local.clear();
-	for(var idx=0; idx<5;idx++) {
+	for(var idx in arr) {
 		var curr = arr[idx].replace('https://github.com','');
 		var temp = arr[idx];
 		(function(i,ele){
@@ -89,7 +89,7 @@ function updateView(arr) {
 		var curr = arr[idx].replace('https://github.com','');
 		var usrrepo = curr.split('/');
 
-		var ele = ["<li class='public source' style='position:relative;'>",
+		var ele = [idx < 5 ? "<li class='public source' style='position:relative;'>" : "<li class='public source' style='position:relative;display:none'>",
 					"<a href='" + curr +  "' class='mini-repo-list-item css-truncate' data-ga-click='Dashboard, click, Popular repos list item - context:user visibility:public fork:false'>",
 					svg,
 					"<span class='repo-and-owner css-truncate-target'>",
