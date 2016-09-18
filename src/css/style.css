@@ -1,0 +1,13 @@
+#extension-ul li .pop-over-box {
+  display: none;
+  position: absolute;
+  left: -320px;
+  width: 320px;
+  top: 0;
+}
+#extension-ul li .pop-over-box:hover {
+  display: block;
+}
+#extension-ul li:hover .pop-over-box {
+  display: block;
+}
