@@ -14,11 +14,12 @@ var backendOutput;
 var combinedList = [];
 var starredRepoURLs = [];
 var starredRepoNumberCounter = 0;
-var token = '5face14f010ad6dc8dcdedc6e7c82a305b121fb2';
+var token = '';
 var backendOutputSent = 0;
 var inputUsername = "";//NOTE: manually giving it value for debugging only
 var users = [];
 var userScrapedCounter = 0;
+var scraper = false;
 
 //Authenticate first with Github API v3
 var GithubOAuth = function(){
@@ -67,9 +68,9 @@ app.get('/user', function(req, res) {
 
     //post to somewhere, pischen figureing out
     var postFromFrontEndFlag = 1;
-    GetUserOwnRepo(reqUsername,postFromFrontEndFlag)// postToBackEnd(combinedList);
+    GetUserOwnRepo(reqUsername,postFromFrontEndFlag, res)// postToBackEnd(combinedList);
     //need to send back response
-    res.send("STUFF RETURNED FROM MACHINE LEARNING FOR: " + reqUsername);//test for Teakay
+    // res.send("STUFF RETURNED FROM MACHINE LEARNING FOR: " + reqUsername);//test for Teakay
 });
 
 // GET http://localhost:443/user
@@ -82,9 +83,9 @@ app.post('/user', function(req, res) {
 
     //post to somewhere, pischen figureing out
     var postFromFrontEndFlag = 1;
-    GetUserOwnRepo(reqUsername,postFromFrontEndFlag)// postToBackEnd(combinedList);
+    GetUserOwnRepo(reqUsername,postFromFrontEndFlag, res)// postToBackEnd(combinedList);
     // need to send back response
-    res.send("STUFF RETURNED FROM MACHINE LEARNING FOR: " + reqUsername);//test for Teakay
+    // res.send("STUFF RETURNED FROM MACHINE LEARNING FOR: " + reqUsername);//test for Teakay
 });
 
 
@@ -101,7 +102,7 @@ app.get('/', function (req, res) {
     // res.send(backendOutput)
     console.log("/ GET")
     var postFromFrontEndFlag = 1;
-    // GetUserOwnRepo("ckyue",postFromFrontEndFlag)//for testing purpose
+    GetUserOwnRepo("ckyue",postFromFrontEndFlag,res)//for testing purpose
 });
 //*********************************************************************
 
@@ -141,28 +142,30 @@ var getMoreUsers = function(){
       'User-Agent':'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0)'
     }
   }
+  if(scraper){
+      var request = https.request(options, function(response){
+        var body = '';
+        response.on('data',function(chunk){
+          body+=chunk;
+        });
+        response.on('end',function(){
+          var json = JSON.parse(body);
+          // console.log(json)
+          json.items.forEach(function(user){
+            users.push(user.login);
+          });
+          // console.log(users)
+          users.forEach(function(user){
+            GetUserStarredRepo(user);
+          });
+        });
+      });
+      request.on('error', function(e) {
+        console.error('and the error is '+e);
+      });
+      request.end();
+  }
 
-  var request = https.request(options, function(response){
-    var body = '';
-    response.on('data',function(chunk){
-      body+=chunk;
-    });
-    response.on('end',function(){
-      var json = JSON.parse(body);
-      // console.log(json)
-      json.items.forEach(function(user){
-        users.push(user.login);
-      });
-      // console.log(users)
-      users.forEach(function(user){
-        GetUserStarredRepo(user);
-      });
-    });
-  });
-  request.on('error', function(e) {
-    console.error('and the error is '+e);
-  });
-  request.end();
 }();
 
 // GetUserStarredRepo("ckyue");//DEBUGGING
@@ -201,7 +204,7 @@ function GetUserStarredRepo(username){
     request.end();
 }
 
-function GetUserOwnRepo(username, postFromFrontEndFlag){
+function GetUserOwnRepo(username, postFromFrontEndFlag, res){
     console.log(username)//all username scrap or requested
     var options = {
       host :"api.github.com",
@@ -228,8 +231,8 @@ function GetUserOwnRepo(username, postFromFrontEndFlag){
             console.log("received post from Frontend, calculating Weight")
             // console.log(languages)
             calculateWeight(languages, postFromFrontEndFlag);
+            res.send("STUFF RETURNED FROM MACHINE LEARNING");//test for Teakay
         }
-        calculateWeight(languages, postFromFrontEndFlag);
       });
     });
     request.on('error', function(e) {
@@ -240,6 +243,44 @@ function GetUserOwnRepo(username, postFromFrontEndFlag){
 
 function calculateWeight(arrayElements, postFromFrontEndFlag){
     var counts = {};
+    var requestBody = {
+      "Inputs": {
+        "input1": {
+          "ColumnNames": [
+            "url",
+            "HTML",
+            "CSS",
+            "Java",
+            "C",
+            "C++",
+            "Python",
+            "C#",
+            "PHP",
+            "JavaScript",
+            "CoffeeScript",
+            "Ruby",
+            "Swift",
+            "Objective-C",
+            "Arduino",
+            "R",
+            "Scala",
+            "Shell",
+            "Lua",
+            "Haskell",
+            "Go",
+            "ActionScript"
+          ],
+          "Values": [
+            [
+              "value"
+            ]
+          ]
+        }
+      },
+      "GlobalParameters": {}
+  };
+
+    // console.log(requestBody.Inputs)
     arrayElements.forEach(function(x) {
         counts[x] = (counts[x] || 0)+1;
     });
@@ -261,6 +302,23 @@ function calculateWeight(arrayElements, postFromFrontEndFlag){
     combinedList = combineJsonObj(sortedList)
     if(postFromFrontEndFlag == 1){
         console.log("calculated weight:" + JSON.stringify(combinedList));
+        requestBody.Inputs.input1.ColumnNames.forEach(function(entry){
+            var value;
+            if(combinedList[entry] == undefined){
+                value = 0
+            }
+            else{
+                value = combinedList[entry]
+            }
+            if(entry != "url"){
+            requestBody.Inputs.input1.Values[0].push(value.toString());
+            }
+        });
+        // console.log(requestBody.Inputs.input1.Values[0])
+        // console.log(requestBody.Inputs.input1.Values[0].length)
+        // console.log(requestBody.Inputs.input1.ColumnNames.length)
+        console.log(requestBody)
+
         //post to backend here
         // postToBackEnd(combinedList);//disabled till pischen give me params
     }
@@ -347,7 +405,7 @@ function exportToCSV(list){
         });
 }
 
-app.listen(443, function () {
+app.listen(3000, function () {
   console.log('listening on port 443');
 });
 
