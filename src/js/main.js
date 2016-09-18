@@ -27,7 +27,7 @@ if (name && name != '') {
 
 function loopToCache(arr) {
 	chrome.storage.local.clear();
-	for(var idx in arr) {
+	for(var idx=0; i<5;i++) {
 		var curr = arr[idx].replace('https://github.com','');
 		var temp = arr[idx];
 		(function(i,ele){
