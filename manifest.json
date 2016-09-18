@@ -17,7 +17,8 @@
   "content_scripts": [
     {
       "matches": ["*://github.com/"],
-      "js": ["src/js/main.js"]
+      "js": ["src/js/token.js","src/js/main.js"],
+      "css": ["src/css/style.css"]
     }
  ]
 }
