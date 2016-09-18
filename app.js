@@ -159,7 +159,7 @@ function postToBackEnd(requestBody, res){
         for(var i = 0; i < 10; i++){
             recommendation.data.push(sortedScores[i][0])
         }
-        res.send(recommendation);//test for Teakay
+        res.send(recommendation);//for Frontend
     });
   });
 
