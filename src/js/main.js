@@ -101,7 +101,10 @@ function setPopOverBox(idx,data){
 				gridLineInterpolation: 'Polygon',
 				lineWidth: 0,
 				min: 0,
-				max: 5
+				max: 5,
+				labels: {
+					enabled: false
+				}
 			},
 
 			legend: {
