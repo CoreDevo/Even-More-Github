@@ -2,7 +2,7 @@ var name = $('.header-nav-current-user > strong').text();
 var extensionElement = null;
 if (name && name != '') {
 	$.ajax ({
-		url: 'https://5885ee49.ngrok.io/user',
+		url: 'https://c11c3649.ngrok.io/user',
 		type: 'POST',
 		contentType: 'application/x-www-form-urlencoded',
 		charset: 'UTF-8',
@@ -15,7 +15,7 @@ if (name && name != '') {
 			console.log(arr);
 			updateView(arr);
 			loopToCache(arr);
-		}, 
+		},
 		error: function(e){
 			console.log(e);
 		}
@@ -37,7 +37,7 @@ function loopToCache(arr) {
 					obj[ele] = data;
 					chrome.storage.local.set(obj);
 					setPopOverBox(i,data);
-				},  
+				},
 				error: function(e){
 					console.log(e);
 				}
@@ -50,7 +50,7 @@ function setPopOverBox(idx,data){
 	var str = 'N/A';
 	if(data['language']) str = data['language'];
 	var popOverContainer = $(['<div class="boxed-group js-repo-filter flush pop-over-box" role="navigation">',
-							'<h3>' + data['name'] + ' (' + str + ')', 
+							'<h3>' + data['name'] + ' (' + str + ')',
 							'<span class="stars" style="float: right;"> ' + data['stargazers_count'],
 							'<svg aria-label="stars" class="octicon octicon-star" height="16" role="img" version="1.1" viewBox="0 0 14 16" width="14"><path d="M14 6l-4.9-.64L7 1 4.9 5.36 0 6l3.6 3.26L2.67 14 7 11.67 11.33 14l-.93-4.74z"></path></svg>',
 							'</span>',
@@ -62,58 +62,58 @@ function setPopOverBox(idx,data){
 							'</div>'].join(''));
 	var numdata = [data['stargazers_count'],data['forks'],data['watchers'],data['subscribers_count'],Math.max(1,data['open_issues']),data['size']];
 	numdata = numdata.map(Math.log10);
-	numdata[3] = 0.5 + numdata[3];	
+	numdata[3] = 0.5 + numdata[3];
 	numdata[4] = 1.5 + numdata[4];
-	numdata[5] = Math.min(5, numdata[5]); 
+	numdata[5] = Math.min(5, numdata[5]);
 
 	$('#extension-ul li')
 		.eq(idx)
 		.append(popOverContainer)
 		.find('.containerz')
 		.highcharts({
-				
+
 			chart: {
 				renderTo: 'container',
 				polar: true,
 				type: 'area'
 			},
-			
+
 			credits: {
 				enabled: false
 			},
-			
+
 			title: {
 				floating: true,
 				text: null
 			},
-			
+
 			pane: {
 				size: '80%'
 			},
-			
+
 			xAxis: {
 				categories: ['Stargazers', 'Forks', 'Watchers', 'Subscribers', 'Issue', 'Size'],
 				tickmarkPlacement: 'on',
 				lineWidth: 0
 			},
-				
+
 			yAxis: {
 				gridLineInterpolation: 'Polygon',
 				lineWidth: 0,
 				min: 0,
 				max: 5
 			},
-			
+
 			legend: {
 				enabled: false
 			},
-			
+
 			series: [{
 				  name: 'score',
 				data: numdata,
 				pointPlacement: 'on'
 			}]
-	
+
 		});
 
 	hide(popOverContainer);
@@ -123,8 +123,8 @@ function setPopOverBox(idx,data){
 
 function updateView(arr) {
 
-	var element = $(["<div id='extension' class='boxed-group flush' role='navigation'>", 
-					"<h3>Recommended Repositories <span class='counter'>5</span></h3>", 
+	var element = $(["<div id='extension' class='boxed-group flush' role='navigation'>",
+					"<h3>Recommended Repositories <span class='counter'>5</span></h3>",
 					"<ul id='extension-ul' class='boxed-group-inner mini-repo-list'>",
 					"</ul>",
 					"</div>"].join(''));
@@ -175,7 +175,7 @@ function updateView(arr) {
 			console.log(items);
 		});
 	});
-	
+
 	$("#extension-ul li a").on("mouseleave",function(e){
 		e.preventDefault();
 		hide($(this).parent().find('.pop-over-box'));
@@ -192,4 +192,3 @@ function show(e){
 		"display":"block"
 	});
 }
-
