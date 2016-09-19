@@ -51,7 +51,7 @@ function setPopOverBox(idx,data){
 	if(data['language']) str = data['language'];
 	var popOverContainer = $(['<div class="boxed-group js-repo-filter flush pop-over-box" role="navigation">',
 							'<h3>' + data['name'] + ' (' + str + ')',
-							'<span class="stars" style="float: right;"> ' + data['stargazers_count'],
+							'<span class="stars" style="float: right;"> ' + data['stargazers_count'] + ' ',
 							'<svg aria-label="stars" class="octicon octicon-star" height="16" role="img" version="1.1" viewBox="0 0 14 16" width="14"><path d="M14 6l-4.9-.64L7 1 4.9 5.36 0 6l3.6 3.26L2.67 14 7 11.67 11.33 14l-.93-4.74z"></path></svg>',
 							'</span>',
 							'</h3>',
