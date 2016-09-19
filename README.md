@@ -7,7 +7,7 @@ Install and go to github main page (buttom right side)
 
 **Sample Effect:**
 
-![alt tag](demo.png)
+![alt tag](demo.jpg)
 
 **[Click me to download!](https://chrome.google.com/webstore/detail/even-more-github/hjhjgcikcdamgiihhhlfcnocgnbllhmm)**
 
