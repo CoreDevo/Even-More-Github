@@ -1,2 +1,2 @@
-# Even-More-Github
-Enhance your Github experience
+# Github Explorer
+Github Repository recommendation based on Azure machine learning result
