@@ -2,7 +2,7 @@ var name = $('.header-nav-current-user > strong').text();
 var extensionElement = null;
 if (name && name != '') {
 	$.ajax ({
-		url: 'https://c11c3649.ngrok.io/user',
+		url: 'https://b85a9e02.ngrok.io/user',
 		type: 'POST',
 		contentType: 'application/x-www-form-urlencoded',
 		charset: 'UTF-8',
