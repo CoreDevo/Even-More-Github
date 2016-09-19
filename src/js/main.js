@@ -137,12 +137,17 @@ function updateView(arr) {
 	$('.dashboard-sidebar').append(element);
 	$('#extension').css("margin-top", "20px");
 
+	var cach = [];
+	var outcount = 0;
+
 	for(var idx in arr) {
 
 		var curr = arr[idx].replace('https://github.com','');
+		if (cach.length != 0 && cach.indexOf(curr) != -1) continue;
+		cach.push(curr);
 		var usrrepo = curr.split('/');
 
-		var ele = [idx < 5 ? "<li class='public source' style='position:relative;'>" : "<li class='public source' style='position:relative;display:none'>",
+		var ele = ["<li class='public source' style='position:relative;'>",
 					"<a href='" + curr +  "' class='mini-repo-list-item css-truncate' data-ga-click='Dashboard, click, Popular repos list item - context:user visibility:public fork:false'>",
 					svg,
 					"<span class='repo-and-owner css-truncate-target'>",
@@ -152,6 +157,8 @@ function updateView(arr) {
 					"</span></a></li>"].join('');
 
 		$('#extension-ul').append(ele);
+		outcount++;
+		if (outcount == 5) break;
 	}
 
 	var ref = [	"<div class='more-repos'>",
