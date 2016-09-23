@@ -16,6 +16,7 @@
     "sort-json": "latest",
     "json2csv": "latest",
     "ya-csv": "latest",
-    "body-parser": "latest"
+    "body-parser": "latest",
+    "github-scraper": "latest"
   }
 }
