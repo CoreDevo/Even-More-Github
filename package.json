@@ -17,6 +17,8 @@
     "json2csv": "latest",
     "ya-csv": "latest",
     "body-parser": "latest",
-    "github-scraper": "latest"
+    "github-scraper": "latest",
+    "cheerio": "latest",
+    "request": "latest"
   }
 }
