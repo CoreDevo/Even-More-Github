@@ -78,8 +78,8 @@ app.get('/user', function(req, res) {
 app.post('/user', function(req, res) {
     //For POST from body
     var reqUsername = req.body.username;
-    console.log("Received username " + reqUsername);
-
+    var d = new Date();
+    console.log("=================Received username " + reqUsername + " at " + d.toUTCString());
 
     //post to somewhere, pischen figureing out
     var postFromFrontEndFlag = 1;
@@ -161,7 +161,8 @@ function postToBackEnd(requestBody, res){
             recommendation.data.push(sortedScores[rand][0])
         }
         res.send(recommendation);//for Frontend
-        console.log(recommendation.data)
+        console.log("recommendation sent back")
+        // console.log(recommendation.data)
     });
   });
 
@@ -248,7 +249,7 @@ function GetUserStarredRepo(username){
 }
 
 function GetUserOwnRepo(username, postFromFrontEndFlag, res){
-    console.log(username)//all username scrap or requested
+    // console.log(username)//all username scrap or requested
     var options = {
       host :"api.github.com",
       path : '/users/'+username+'/repos',
@@ -272,7 +273,7 @@ function GetUserOwnRepo(username, postFromFrontEndFlag, res){
           languages.push(repo.language);
         });
         if(postFromFrontEndFlag == 1){
-            console.log("received post from Frontend, calculating Weight")
+            console.log("calculating Weight")
             // console.log(languages)
             calculateWeight(languages, postFromFrontEndFlag, res);
         }
