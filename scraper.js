@@ -25,15 +25,15 @@ function scrapeRepoLink(pageCounter){
 
         if(pageCounter != 10){
             console.log("retrieve Repo URLs from page " + pageCounter + " done!")
+            console.log("==========================================================")
             scrapeRepoLink(pageCounter)
         }else{
             console.log("starting to scrape " + urlArray.length + " repos :)")
+            console.log("==========================================================")
             recursiveGetRepoLangs("/CoreDevo/Even-More-Github")
         }
     });
 }
-
-
 
 function recursiveGetRepoLangs(url){
     repoCounter++;
@@ -45,12 +45,13 @@ function recursiveGetRepoLangs(url){
         if(repoCounter != urlArray.length){
             recursiveGetRepoLangs(urlArray[repoCounter])
         }else{
-            console.log("done")
+            console.log("===========================DONE===========================")
         }
     })
 
 }
 
 var init = function(){
+    console.log("===========================INIT===========================")
     scrapeRepoLink(pageCounter);
 }();
