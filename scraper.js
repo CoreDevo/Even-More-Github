@@ -73,6 +73,7 @@ function recursiveGetRepoLinks(user){
 
 function recursiveGetRepoLangs(url){
     repoCounter++;
+    console.log("start analyzing: "+url)
     gs(url, function(err, data) {
         if(data != null && data.langs != null){
             // console.log(data.langs);
