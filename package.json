@@ -19,6 +19,6 @@
     "body-parser": "latest",
     "github-scraper": "latest",
     "cheerio": "latest",
-    "request": "latest"
+    "request": "latest",
   }
 }

@@ -1,11 +1,17 @@
 var gs = require('github-scraper');
 var cheerio = require('cheerio')
 var request = require('request');
-var repoCounter = 0;
+var json2csv = require('json2csv');
+var fs = require('fs');
 var userArray = new Array()
 var repoUrlArray = new Array();
+var repoLangDataArray = new Array();
+var repoCounter = 0;
 var pageCounter = 0;
 var userCounter = 0;
+
+var fields = ['url','Java','C','C++', 'Python','C#','PHP','JavaScript','CoffeeScript','TypeScript','Ruby','Swift','Haskell','Perl','Objective-C','Arduino','R','Matlab','Scala','Shell','Lua','Makefile','Clojure','Bash','Go','ActionScript','Groovy','Puppet','Rust','PowerShell','Erlang','Batchfile'];
+
 
 //top 1000 Repos for now
 function scrapeUserLink(pageCounter){
@@ -46,6 +52,7 @@ function recursiveGetRepoLinks(user){
         if(data != null){
             data.entries.forEach(function(entry){
                 var repoLink = entry;
+                repoLink = repoLink.replace('/', "");
                 repoUrlArray.push(repoLink)
                 // console.log(repoLink)
             });
@@ -68,19 +75,35 @@ function recursiveGetRepoLangs(url){
     repoCounter++;
     gs(url, function(err, data) {
         if(data != null){
-            console.log(data.langs); //do whatever with data.langs then
+            // console.log(data.langs);
+            var obj = {url: data.url}
+            if(data.langs.length > 0){
+                data.langs.forEach(function(lang){
+                    var splittedData = lang.split(" ")
+                    obj[splittedData[0]] = splittedData[1]
+                })
+            }
+            repoLangDataArray.push(obj)
         }
 
         if(repoCounter != repoUrlArray.length){
             recursiveGetRepoLangs(repoUrlArray[repoCounter-1])
         }else{
-            console.log("===========================DONE===========================")
+            exportToCSV(repoLangDataArray)
         }
     })
-
 }
 
 var init = function(){
     console.log("===========================INIT===========================")
     scrapeUserLink(pageCounter);
 }();
+
+function exportToCSV(repoLangDataArray){
+    var csv = json2csv({ data: repoLangDataArray, fields: fields });
+
+    fs.writeFile('dataset.csv', csv, function(err) {
+      if (err) throw err;
+      console.log('file saved');
+    });
+}
