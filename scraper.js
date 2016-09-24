@@ -49,7 +49,7 @@ function scrapeUserLink(pageCounter){
 function recursiveGetRepoLinks(user){
     userCounter++;
     gs(user, function(err, data) {
-        if(data != null && data.entries != null)){
+        if(data != null && data.entries != null){
             data.entries.forEach(function(entry){
                 var repoLink = entry;
                 repoLink = repoLink.replace('/', "");
