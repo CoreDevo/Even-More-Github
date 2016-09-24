@@ -74,7 +74,7 @@ function recursiveGetRepoLinks(user){
 function recursiveGetRepoLangs(url){
     repoCounter++;
     gs(url, function(err, data) {
-        if(data != null){
+        if(data.langs != null){
             // console.log(data.langs);
             var obj = {url: data.url}
             if(data.langs.length > 0){
@@ -88,6 +88,7 @@ function recursiveGetRepoLangs(url){
         }
 
         if(repoCounter != repoUrlArray.length){
+            console.log("Repo analyzed: " + repoLangDataArray.length)
             recursiveGetRepoLangs(repoUrlArray[repoCounter-1])
         }else{
             console.log("all repo analyzed, exporting to CSV...")
