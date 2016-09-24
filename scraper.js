@@ -80,7 +80,7 @@ function recursiveGetRepoLangs(url){
             if(data.langs.length > 0){
                 data.langs.forEach(function(lang){
                     var splittedData = lang.split(" ")
-                    obj[splittedData[0]] = splittedData[1]
+                    obj[splittedData[0]] = parseInt(splittedData[1].replace("%",""))/100
                 })
             }
             console.log(JSON.stringify(obj))
