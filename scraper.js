@@ -83,12 +83,14 @@ function recursiveGetRepoLangs(url){
                     obj[splittedData[0]] = splittedData[1]
                 })
             }
+            console.log(JSON.stringify(obj))
             repoLangDataArray.push(obj)
         }
 
         if(repoCounter != repoUrlArray.length){
             recursiveGetRepoLangs(repoUrlArray[repoCounter-1])
         }else{
+            console.log("all repo analyzed, exporting to CSV...")
             exportToCSV(repoLangDataArray)
         }
     })
