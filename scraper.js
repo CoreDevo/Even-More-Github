@@ -49,7 +49,7 @@ function scrapeUserLink(pageCounter){
 function recursiveGetRepoLinks(user){
     userCounter++;
     gs(user, function(err, data) {
-        if(data != null){
+        if(data != null && data.entries != null)){
             data.entries.forEach(function(entry){
                 var repoLink = entry;
                 repoLink = repoLink.replace('/', "");
@@ -74,7 +74,7 @@ function recursiveGetRepoLinks(user){
 function recursiveGetRepoLangs(url){
     repoCounter++;
     gs(url, function(err, data) {
-        if(data.langs != null){
+        if(data != null && data.langs != null){
             // console.log(data.langs);
             var obj = {url: data.url}
             if(data.langs.length > 0){
