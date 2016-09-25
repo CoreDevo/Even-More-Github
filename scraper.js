@@ -90,7 +90,10 @@ function recursiveGetRepoLangs(url){
 
         if(repoCounter != repoUrlArray.length){
             console.log("Repo analyzed: " + repoLangDataArray.length)
-            recursiveGetRepoLangs(repoUrlArray[repoCounter-1])
+            if(repoUrlArray[repoCounter-1] == "sebmarkbage/ecmascript-undefined-propagation"){
+                repoCounter++;
+            }
+            recursiveGetRepoLangs(repoUrlArray[repoCounter-1]);
         }else{
             console.log("all repo analyzed, exporting to CSV...")
             exportToCSV(repoLangDataArray)
