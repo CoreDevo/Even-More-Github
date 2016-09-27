@@ -10,7 +10,7 @@ var repoCounter = 0;
 var pageCounter = 0;
 var userCounter = 0;
 
-var fields = ['url','Java','C','C++', 'Python','C#','PHP','JavaScript','CoffeeScript','TypeScript','Ruby','Swift','Haskell','Perl','Objective-C','Arduino','R','Matlab','Scala','Shell','Lua','Makefile','Clojure','Bash','Go','ActionScript','Groovy','Puppet','Rust','PowerShell','Erlang','Batchfile'];
+var fields = ['url','HTML','CSS','Java','C','C++', 'Python','C#','PHP','JavaScript','CoffeeScript','TypeScript','Ruby','Swift','Haskell','Perl','Objective-C','Arduino','R','Matlab','Scala','Shell','Lua','Makefile','Clojure','Bash','Go','ActionScript','Groovy','Puppet','Rust','PowerShell','Erlang','Batchfile'];
 
 
 //top 1000 Repos for now
