@@ -40,7 +40,6 @@ function scrapeUserLink(pageCounter){
         }else{
             console.log("starting to scrape " + userArray.length + " repo links :)")
             console.log("==========================================================")
-            // recursiveGetRepoLangs("/CoreDevo/Even-More-Github")
             recursiveGetRepoLinks("stars/ckyue")
         }
     });
