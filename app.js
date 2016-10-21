@@ -130,7 +130,7 @@ function postToBackEnd(requestBody, res){
     //   console.log(json.Results.output1.value.ColumnNames)
     // console.log(json.Results.output1.value.ColumnNames.length)
     // console.log(json.Results.output1.value.Values[0].length)
-
+    //GG HERE
       json.Results.output1.value.ColumnNames.forEach(function(entry){
         //   console.log(entry)
           var entryName = entry.match(/\w+|"[^"]+"/g)[4];
